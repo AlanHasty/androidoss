@@ -18,9 +18,11 @@ import com.oscon.android.oss.service.TwitterService;
 
 import java.util.List;
 
+import retrofit.Callback;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 import static retrofit.RestAdapter.LogLevel.FULL;
 import static retrofit.RestAdapter.LogLevel.NONE;
@@ -34,43 +36,29 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mListView = (ListView) findViewById(R.id.list);
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        new FetchTask().execute(1);
-    }
-
-    public class FetchTask extends AsyncTask<Integer, Integer, List<Tweet>> {
-        @Override
-        protected List<Tweet> doInBackground(Integer... integers) {
-            final RestAdapter restAdapter = new RestAdapter.Builder()
-                    .setLogLevel(BuildConfig.DEBUG ? FULL : NONE)
-                    .setEndpoint(TwitterService.API_URL)
-                    .setRequestInterceptor(new RequestInterceptor() {
-                        @Override
-                        public void intercept(RequestFacade request) {
-                            request.addHeader("Authorization", TwitterService.AUTH_HEADER);
-                        }
-                    })
-                    .build();
-            final TwitterService service = restAdapter.create(TwitterService.class);
-            try {
-                final SearchResults results = service.searchTweets("OSCON");
-                return results.statuses;
-            } catch (RetrofitError e) {
-                Log.e(TAG, e.getUrl() + ": " + e.getMessage());
+        final RestAdapter restAdapter = new RestAdapter.Builder()
+                .setLogLevel(BuildConfig.DEBUG ? FULL : NONE)
+                .setEndpoint(TwitterService.API_URL)
+                .setRequestInterceptor(new RequestInterceptor() {
+                    @Override
+                    public void intercept(RequestFacade request) {
+                        request.addHeader("Authorization", TwitterService.AUTH_HEADER);
+                    }
+                })
+                .build();
+        final TwitterService service = restAdapter.create(TwitterService.class);
+        service.searchTweets("OSCON", new Callback<SearchResults>() {
+            @Override
+            public void success(SearchResults results, Response response) {
+                mListView.setAdapter(new TweetAdapter(MainActivity.this, results.statuses));
             }
-            return null;
-        }
 
-        @Override
-        protected void onPostExecute(List<Tweet> statuses) {
-            if (statuses != null) {
-                mListView.setAdapter(new TweetAdapter(MainActivity.this, statuses));
+            @Override
+            public void failure(RetrofitError error) {
+                Log.e(TAG, error.getUrl() + ": " + error.getMessage());
             }
-        }
+        });
     }
 
     public static class TweetAdapter extends BaseAdapter {
