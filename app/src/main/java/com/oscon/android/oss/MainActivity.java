@@ -22,6 +22,8 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 
 public class MainActivity extends Activity {
+    public static final String TAG = MainActivity.class.getName();
+
     ListView mListView;
 
     @Override
@@ -48,7 +50,7 @@ public class MainActivity extends Activity {
                 final SearchResults results = service.searchTweets("OSCON");
                 mListView.setAdapter(new TweetAdapter(MainActivity.this, results.statuses));
             } catch (RetrofitError e) {
-                Log.e("androidoss", e.getUrl() + ": " + e.getMessage());
+                Log.e(TAG, e.getUrl() + ": " + e.getMessage());
             }
             return null;
         }
