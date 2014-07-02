@@ -45,9 +45,9 @@ public class MainActivity extends Activity {
         new FetchTask().execute(1);
     }
 
-    public class FetchTask extends AsyncTask<Integer, Integer, Integer> {
+    public class FetchTask extends AsyncTask<Integer, Integer, List<Tweet>> {
         @Override
-        protected Integer doInBackground(Integer... integers) {
+        protected List<Tweet> doInBackground(Integer... integers) {
             final RestAdapter restAdapter = new RestAdapter.Builder()
                     .setLogLevel(BuildConfig.DEBUG ? FULL : NONE)
                     .setEndpoint(TwitterService.API_URL)
@@ -61,11 +61,18 @@ public class MainActivity extends Activity {
             final TwitterService service = restAdapter.create(TwitterService.class);
             try {
                 final SearchResults results = service.searchTweets("OSCON");
-                mListView.setAdapter(new TweetAdapter(MainActivity.this, results.statuses));
+                return results.statuses;
             } catch (RetrofitError e) {
                 Log.e(TAG, e.getUrl() + ": " + e.getMessage());
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(List<Tweet> statuses) {
+            if (statuses != null) {
+                mListView.setAdapter(new TweetAdapter(MainActivity.this, statuses));
+            }
         }
     }
 
