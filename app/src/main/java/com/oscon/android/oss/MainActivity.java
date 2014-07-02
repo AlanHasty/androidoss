@@ -18,6 +18,7 @@ import com.oscon.android.oss.service.TwitterService;
 
 import java.util.List;
 
+import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 
@@ -26,6 +27,8 @@ import static retrofit.RestAdapter.LogLevel.NONE;
 
 public class MainActivity extends Activity {
     public static final String TAG = MainActivity.class.getName();
+    // TODO(@moh): add authorization code
+    private static final String AUTHORIZATION = "";
 
     ListView mListView;
 
@@ -48,6 +51,12 @@ public class MainActivity extends Activity {
             final RestAdapter restAdapter = new RestAdapter.Builder()
                     .setLogLevel(BuildConfig.DEBUG ? FULL : NONE)
                     .setEndpoint(TwitterService.API_URL)
+                    .setRequestInterceptor(new RequestInterceptor() {
+                        @Override
+                        public void intercept(RequestFacade request) {
+                            request.addHeader("Authorization", AUTHORIZATION);
+                        }
+                    })
                     .build();
             final TwitterService service = restAdapter.create(TwitterService.class);
             try {
