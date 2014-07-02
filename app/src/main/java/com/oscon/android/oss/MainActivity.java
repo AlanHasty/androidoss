@@ -27,10 +27,7 @@ import static retrofit.RestAdapter.LogLevel.NONE;
 
 public class MainActivity extends Activity {
     public static final String TAG = MainActivity.class.getName();
-    // TODO(@moh): add authorization code
-    private static final String AUTHORIZATION = "";
-
-    ListView mListView;
+    private ListView mListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +51,7 @@ public class MainActivity extends Activity {
                     .setRequestInterceptor(new RequestInterceptor() {
                         @Override
                         public void intercept(RequestFacade request) {
-                            request.addHeader("Authorization", AUTHORIZATION);
+                            request.addHeader("Authorization", TwitterService.AUTH_HEADER);
                         }
                     })
                     .build();
