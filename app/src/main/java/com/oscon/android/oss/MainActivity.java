@@ -21,6 +21,9 @@ import java.util.List;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 
+import static retrofit.RestAdapter.LogLevel.FULL;
+import static retrofit.RestAdapter.LogLevel.NONE;
+
 public class MainActivity extends Activity {
     public static final String TAG = MainActivity.class.getName();
 
@@ -43,6 +46,7 @@ public class MainActivity extends Activity {
         @Override
         protected Integer doInBackground(Integer... integers) {
             final RestAdapter restAdapter = new RestAdapter.Builder()
+                    .setLogLevel(BuildConfig.DEBUG ? FULL : NONE)
                     .setEndpoint(TwitterService.API_URL)
                     .build();
             final TwitterService service = restAdapter.create(TwitterService.class);
