@@ -2,19 +2,20 @@ package com.oscon.android.oss;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.oscon.android.oss.service.SearchResults;
 import com.oscon.android.oss.service.Tweet;
 import com.oscon.android.oss.service.TwitterService;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -63,11 +64,13 @@ public class MainActivity extends Activity {
 
     public static class TweetAdapter extends BaseAdapter {
         private final LayoutInflater mInflater;
+        private final Picasso mPicasso;
         private final List<Tweet> mTweets;
 
         public TweetAdapter(Context context, List<Tweet> tweets) {
             super();
             mInflater = LayoutInflater.from(context);
+            mPicasso = Picasso.with(context);
             mTweets = tweets;
         }
 
@@ -89,18 +92,30 @@ public class MainActivity extends Activity {
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             final View newView;
-            final TextView tv;
+            final TweetHolder vh;
             if (view == null) {
                 newView = mInflater.inflate(R.layout.list_item_row, viewGroup, false);
-                tv = (TextView) newView.findViewById(R.id.label);
-                newView.setTag(tv);
+                vh = new TweetHolder(newView);
+                newView.setTag(vh);
             } else {
                 newView = view;
-                tv = (TextView) view.getTag();
+                vh = (TweetHolder) view.getTag();
             }
 
-            tv.setText(mTweets.get(i).text);
+            final Tweet tweet = mTweets.get(i);
+            vh.label.setText(tweet.text);
+            mPicasso.load(tweet.user.profile_image_url).into(vh.avatar);
             return newView;
+        }
+    }
+
+    public static class TweetHolder {
+        public TextView label;
+        public ImageView avatar;
+
+        public TweetHolder(View view) {
+            this.label = (TextView) view.findViewById(R.id.label);
+            this.avatar = (ImageView) view.findViewById(R.id.avatar);
         }
     }
 }

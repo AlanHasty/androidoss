@@ -4,7 +4,13 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:padding="@dimen/list_item_padding">
+    <ImageView android:id="@+id/avatar"
+               android:layout_width="@dimen/avatar_size"
+               android:layout_height="@dimen/avatar_size"
+               android:layout_marginRight="@dimen/list_item_padding"
+               android:scaleType="centerCrop"/>
     <TextView android:id="@+id/label"
+              android:text="Test"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"/>
 </LinearLayout>
