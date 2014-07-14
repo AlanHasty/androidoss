@@ -1,4 +1,4 @@
-package com.oscon.android.oss.service;
+package com.oscon.android.oss;
 
 public class Tweet {
     public String text;
