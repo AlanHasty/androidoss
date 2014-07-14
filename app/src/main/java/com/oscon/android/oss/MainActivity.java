@@ -104,7 +104,9 @@ public class MainActivity extends Activity {
 
             final Tweet tweet = mTweets.get(i);
             vh.label.setText(tweet.text);
-            mPicasso.load(tweet.user.profile_image_url).into(vh.avatar);
+            mPicasso.load(tweet.user.profile_image_url)
+                    .placeholder(R.drawable.placeholder)
+                    .into(vh.avatar);
             return newView;
         }
     }
